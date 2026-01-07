@@ -1,13 +1,37 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const helmet = require('helmet');
 require('dotenv').config();
 
 const initializeDbConnection = require('./db');
 
 const app = express();
-app.use(cors());
+
+// SECURITY FIX: configuration CORS explicite (origines autorisées configurables via environnement)
+const corsOptions = {
+  origin: process.env.FRONTEND_ORIGIN || '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+};
+app.use(cors(corsOptions));
+
 app.use(bodyParser.json());
+
+// SECURITY FIX: ajout d'headers de sécurité HTTP standard via helmet
+app.use(helmet({
+  crossOriginEmbedderPolicy: false,
+  contentSecurityPolicy: {
+    useDefaults: true,
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'"],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      imgSrc: ["'self'", 'data:'],
+      connectSrc: ["'self'", '*'],
+    },
+  },
+}));
 
 const startServer = async () => {
   try {
@@ -32,6 +56,13 @@ const startServer = async () => {
     app.use('/api/users', userRoutes);
     app.use('/api/articles', articleRoutes);
     app.use('/api/', commentRoutes);
+
+    // SECURITY FIX: gestion d'erreurs centralisée pour éviter la fuite de détails techniques
+    // (doit être enregistrée après les routes)
+    app.use((err, req, res, next) => {
+      console.error('Erreur serveur non gérée :', err);
+      res.status(500).json({ error: 'Erreur interne du serveur' });
+    });
 
     const PORT = 5100;
     app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
