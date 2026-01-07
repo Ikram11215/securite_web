@@ -1,18 +1,4 @@
-## Audit de sécurité du projet Vuln_JS – Rapport de correction
-
-### 1) Objectif du projet
-
-L’objectif de ce travail est de :
-- **auditer** l’application web (frontend React + backend Express/MySQL),
-- **identifier** les vulnérabilités de sécurité,
-- **implémenter** des correctifs dans le code,
-- **documenter** la démarche et les remédiations dans un rapport exploitable.
-
-L’application fournit un blog avec gestion d’utilisateurs, d’articles et de commentaires.
-
----
-
-### 2) Méthodologie utilisée
+### 1) Méthodologie utilisée
 
 - **Cartographie de l’application**
   - Analyse de la stack : Node/Express (backend), React/TypeScript (frontend), MySQL (DB), JWT pour l’authentification.
@@ -38,9 +24,8 @@ L’application fournit un blog avec gestion d’utilisateurs, d’articles et d
     - ajout d’headers de sécurité via `helmet`,
     - gestion d’erreurs centralisée.
 
----
 
-### 3) Tableau de synthèse des vulnérabilités
+### 2) Tableau de synthèse des vulnérabilités
 
 Chaque vulnérabilité est listée avec : ID, Titre, Sévérité, Composant, Description, Steps to reproduce, Evidence, Fix summary, Fichiers modifiés.
 
@@ -191,7 +176,7 @@ Chaque vulnérabilité est listée avec : ID, Titre, Sévérité, Composant, Des
 
 ---
 
-### 4) Résumé des patchs (bullet list)
+### 3) Résumé des patchs (bullet list)
 
 - **Mots de passe**
   - Intégration de `bcrypt` pour hasher les mots de passe à l’inscription et lors des mises à jour.
@@ -212,7 +197,7 @@ Chaque vulnérabilité est listée avec : ID, Titre, Sévérité, Composant, Des
 
 ---
 
-### 5) Étapes de vérification après correctifs
+### 4) Étapes de vérification après correctifs
 
 - **Vérifier l’authentification et les mots de passe**
   - Créer un nouvel utilisateur, vérifier en base que `password` est un hash `bcrypt` (préfixe `$2b$`).
@@ -236,7 +221,7 @@ Chaque vulnérabilité est listée avec : ID, Titre, Sévérité, Composant, Des
 
 ---
 
-### 6) Checklist de sécurité / leçons apprises
+### 5) Checklist de sécurité / leçons apprises
 
 - **Entrées utilisateur**
   - Toujours valider et nettoyer les données côté serveur (en plus des validations frontend).
@@ -258,6 +243,3 @@ Chaque vulnérabilité est listée avec : ID, Titre, Sévérité, Composant, Des
 - **Gestion des erreurs**
   - Centraliser la gestion des erreurs.
   - Logguer côté serveur, mais exposer au client uniquement des messages génériques.
-
-Ce rapport résume l’audit et les corrections de sécurité appliquées au projet. Il peut servir de base à des audits ultérieurs, ainsi qu’à la mise en place de contrôles automatisés (linting sécurité, SAST/DAST, revues de code régulières).
-
